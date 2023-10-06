@@ -1,38 +1,9 @@
-local servers = {
-	"html",
-	"cssls",
-	"clangd",
-	"eslint",
-	"rust_analyzer",
-	"pylsp",
-	"pyright",
-	"tailwindcss",
-	"clojure_lsp",
-	"bashls",
-	"elixirls",
-	"erlangls",
-	"dartls",
-	"dockerls",
-	"docker_compose_language_service",
-	"graphql",
-	"jsonls",
-	"ocamlls",
-	"ocamllsp",
-	"tsserver",
-	"gopls",
-}
-
 return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
 	dependencies = {
-		"jose-elias-alvarez/typescript.nvim",
 		"hrsh7th/cmp-nvim-lsp",
-		"b0o/SchemaStore.nvim",
-		{
-			"smjonas/inc-rename.nvim",
-			config = true,
-		},
+		{ "antosha417/nvim-lsp-file-operations", config = true },
 	},
 	config = function()
 		-- import lspconfig plugin
@@ -41,19 +12,15 @@ return {
 		-- import cmp-nvim-lsp plugin
 		local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
-		-- import typescript plugin
-		local typescript = require("typescript")
-
 		local keymap = vim.keymap -- for conciseness
 
-		-- enable keybinds only for when lsp server available
+		local opts = { noremap = true, silent = true }
 		local on_attach = function(client, bufnr)
-			-- keybind options
-			local opts = { noremap = true, silent = true, buffer = bufnr }
+			opts.buffer = bufnr
 
 			-- set keybinds
 			opts.desc = "Show LSP references"
-			keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
+			keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
 
 			opts.desc = "Go to declaration"
 			keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
@@ -71,7 +38,7 @@ return {
 			keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
 
 			opts.desc = "Smart rename"
-			keymap.set("n", "<leader>rn", ":IncRename ", opts) -- smart rename
+			keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
 
 			opts.desc = "Show buffer diagnostics"
 			keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
@@ -90,18 +57,6 @@ return {
 
 			opts.desc = "Restart LSP"
 			keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
-
-			-- typescript specific keymaps (e.g. rename file and update imports)
-			if client.name == "tsserver" then
-				opts.desc = "Rename file and update file imports"
-				keymap.set("n", "<leader>rf", ":TypescriptRenameFile<CR>") -- rename file and update imports
-
-				opts.desc = "Rename file and update file imports"
-				keymap.set("n", "<leader>oi", ":TypescriptOrganizeImports<CR>", opts) -- organize imports (not in youtube nvim video)
-
-				opts.desc = "Remove unused imports"
-				keymap.set("n", "<leader>ru", ":TypescriptRemoveUnused<CR>", opts) -- remove unused variables (not in youtube nvim video)
-			end
 		end
 
 		-- used to enable autocompletion (assign to every lsp server config)
@@ -115,67 +70,120 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
 
-		-- configure typescript server with plugin
-		typescript.setup({
-			server = {
-				capabilities = capabilities,
-				on_attach = on_attach,
-			},
+		-- configure html server
+		lspconfig["html"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
 		})
 
-		-- server configs
-		for _, lsp in ipairs(servers) do
-			local filetypes = {}
-			local settings = {}
+		-- configure typescript server with plugin
+		lspconfig["tsserver"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
 
-			if lsp == "graphql" then
-				filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" }
-			end
+		-- configure css server
+		lspconfig["cssls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
 
-			if lsp == "emmet_ls" then
-				filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" }
-			end
+		-- configure tailwindcss server
+		lspconfig["tailwindcss"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
 
-			if lsp == "jsonls" then
-				settings = {
-					json = {
-						format = {
-							enable = true,
-						},
-						validate = { enable = true },
-					},
-				}
-			end
+		-- configure svelte server
+		lspconfig["svelte"].setup({
+			capabilities = capabilities,
+			on_attach = function(client, bufnr)
+				on_attach(client, bufnr)
 
-			if lsp == "lua_ls" then
-				settings = { -- custom settings for lua
-					Lua = {
-						-- make the language server recognize "vim" global
-						diagnostics = {
-							globals = { "vim" },
-						},
-						workspace = {
-							-- make language server aware of runtime files
-							library = {
-								[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-								[vim.fn.stdpath("config") .. "/lua"] = true,
-							},
-						},
-					},
-				}
-			end
+				vim.api.nvim_create_autocmd("BufWritePost", {
+					pattern = { "*.js", "*.ts" },
+					callback = function(ctx)
+						if client.name == "svelte" then
+							client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.file })
+						end
+					end,
+				})
+			end,
+		})
 
-			lspconfig[lsp].setup({
-				on_attach = on_attach,
-				capabilities = capabilities,
-				single_file_support = lsp == "tsserver" or lsp == "eslint",
-				filetypes,
-				settings,
-			})
-		end
+		-- configure prisma orm server
+		lspconfig["prismals"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		-- configure graphql language server
+		lspconfig["graphql"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+			filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+		})
+
+		-- configure emmet language server
+		lspconfig["emmet_ls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+			filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+		})
+
+		-- configure python server
+		lspconfig["pyright"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
 
 		-- configure lua server (with special settings)
 		lspconfig["lua_ls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+			settings = { -- custom settings for lua
+				Lua = {
+					-- make the language server recognize "vim" global
+					diagnostics = {
+						globals = { "vim" },
+					},
+					workspace = {
+						-- make language server aware of runtime files
+						library = {
+							[vim.fn.expand("$VIMRUNTIME/lua")] = true,
+							[vim.fn.stdpath("config") .. "/lua"] = true,
+						},
+					},
+				},
+			},
+		})
+
+		lspconfig["clangd"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["eslint"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["rust_analyzer"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["pylsp"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["clojure_lsp"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["bashls"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 		})
@@ -184,6 +192,46 @@ return {
 			cmd = { "elixir-ls" },
 			on_attach = on_attach,
 			capabilities = capabilities,
+		})
+
+		lspconfig["erlangls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["dartls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["dockerls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["docker_compose_language_service"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["jsonls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["ocamlls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["ocamllsp"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["gopls"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
 		})
 	end,
 }
