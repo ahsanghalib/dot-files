@@ -32,6 +32,8 @@ k.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in n
 
 k.set("n", "<leader>x", "<cmd>bdelete<CR>", { desc = "Close the currnet buffer" })
 k.set("n", "<leader>gg", "<cmd>LazyGit<CR>", { desc = "Lazy Git" })
+k.set("n", "<leader>gd", "<cmd>DiffviewOpen<CR>", { desc = "Diff View Open" })
+k.set("n", "<leader>gh", "<cmd>DiffviewFileHistory<CR>", { desc = "Diff View History" })
 k.set("n", "<C-d>", "<C-d>zz")
 k.set("n", "<C-u>", "<C-u>zz")
 k.set("n", "n", "nzzzv")

@@ -7,10 +7,10 @@ local servers = {
 	"pylsp",
 	"pyright",
 	"tailwindcss",
-	"elixirls",
-	"erlangls",
 	"clojure_lsp",
 	"bashls",
+	"elixirls",
+	"erlangls",
 	"dartls",
 	"dockerls",
 	"docker_compose_language_service",
@@ -178,6 +178,12 @@ return {
 		lspconfig["lua_ls"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
+		})
+
+		lspconfig["elixirls"].setup({
+			cmd = { "elixir-ls" },
+			on_attach = on_attach,
+			capabilities = capabilities,
 		})
 	end,
 }

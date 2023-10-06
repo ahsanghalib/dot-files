@@ -29,6 +29,8 @@ return {
 				"gomodifytags",
 				"iferr",
 				"gotestsum",
+				"sonarlint-language-server",
+				"elixir-ls",
 			},
 		})
 
@@ -44,6 +46,7 @@ return {
 				"graphql",
 				"emmet_ls",
 				"prismals",
+				"elixirls",
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true, -- not the same as ensure_installed
@@ -55,6 +58,7 @@ return {
 				"prettier", -- ts/js formatter
 				"stylua", -- lua formatter
 				"eslint_d", -- ts/js linter
+				"sonarlint-language-server",
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true,
