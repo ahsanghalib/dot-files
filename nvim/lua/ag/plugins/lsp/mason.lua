@@ -36,7 +36,7 @@ return {
 				"iferr",
 				"gotestsum",
 				"sonarlint-language-server",
-				"elixir-ls",
+				"elixirls",
 			},
 		})
 
@@ -53,6 +53,7 @@ return {
 				"emmet_ls",
 				"prismals",
 				"pyright",
+				"elixirls",
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true, -- not the same as ensure_installed
