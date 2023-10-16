@@ -2,10 +2,10 @@ return {
 	{
 		"bluz71/vim-nightfly-guicolors",
 		priority = 1000, -- make sure to load this before all the other start plugins
-		lazy = false,
-		-- config = function()
-		-- 	vim.cmd.colorscheme("nightfly")
-		-- end,
+		config = function()
+			-- load the colorscheme here
+			vim.cmd([[colorscheme nightfly]])
+		end,
 	},
 	{
 		"folke/tokyonight.nvim",
@@ -36,9 +36,9 @@ return {
 		name = "catppuccin",
 		priority = 1000,
 		lazy = false,
-		config = function()
-			vim.cmd.colorscheme("catppuccin")
-		end,
+		-- config = function()
+		-- 	vim.cmd.colorscheme("catppuccin")
+		-- end,
 	},
 	{
 		"projekt0n/github-nvim-theme",
