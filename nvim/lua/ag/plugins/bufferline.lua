@@ -4,8 +4,10 @@ return {
 	version = "*",
 	opts = {
 		options = {
-			mode = "tabs",
-			separator_style = "slant",
+			mode = "buffers",
+			numbers = "ordinal",
+			separator_style = "thick",
+			always_show_bufferline = true,
 		},
 	},
 }

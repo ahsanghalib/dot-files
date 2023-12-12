@@ -47,3 +47,5 @@ opt.undofile = true
 
 vim.g.loaded_python3_provider = 0
 vim.g.python3_host_prog = "~/.pyenv/shims/python"
+
+vim.g.skip_ts_context_commentstring_module = true
