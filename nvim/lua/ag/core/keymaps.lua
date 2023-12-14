@@ -53,3 +53,15 @@ k.set("v", "<leader>d", [["_d]])
 k.set("x", "<leader>p", [["_dP]])
 k.set("n", "<TAB>", "<cmd>bn<CR>")
 k.set("n", "<S-TAB>", "<cmd>bp<CR>")
+k.set("n", "<leader>S", '<cmd>lua require("spectre").toggle()<CR>', {
+	desc = "Toggle Spectre",
+})
+k.set("n", "<leader>sw", '<cmd>lua require("spectre").open_visual({select_word=true})<CR>', {
+	desc = "Search current word",
+})
+k.set("v", "<leader>sw", '<esc><cmd>lua require("spectre").open_visual()<CR>', {
+	desc = "Search current word",
+})
+k.set("n", "<leader>sp", '<cmd>lua require("spectre").open_file_search({select_word=true})<CR>', {
+	desc = "Search on current file",
+})

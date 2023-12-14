@@ -37,6 +37,7 @@ return {
 				"gotestsum",
 				"sonarlint-language-server",
 				"elixirls",
+				"bright_script",
 			},
 		})
 
@@ -54,6 +55,7 @@ return {
 				"prismals",
 				"pyright",
 				"elixirls",
+				"bright_script",
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true, -- not the same as ensure_installed

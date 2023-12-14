@@ -5,7 +5,7 @@ return {
 	opts = {
 		options = {
 			mode = "buffers",
-			numbers = "ordinal",
+			numbers = "both",
 			separator_style = "thick",
 			always_show_bufferline = true,
 		},
