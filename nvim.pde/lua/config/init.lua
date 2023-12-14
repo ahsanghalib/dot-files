@@ -3,7 +3,7 @@ return {
     ai = true,
     angular = true,
     cpp = true,
-    csharp = true,
+    csharp = false,
     docker = true,
     elixir = true,
     flutter = true,
