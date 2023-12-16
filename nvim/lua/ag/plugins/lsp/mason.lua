@@ -38,6 +38,10 @@ return {
 				"sonarlint-language-server",
 				"elixirls",
 				"bright_script",
+				"pyright",
+				"ruff",
+				"mypy",
+				"htmx",
 			},
 		})
 
