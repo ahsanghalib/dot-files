@@ -49,3 +49,8 @@ vim.g.loaded_python3_provider = 0
 vim.g.python3_host_prog = "~/.pyenv/shims/python"
 
 vim.g.skip_ts_context_commentstring_module = true
+
+opt.foldcolumn = "1" -- '0' is not bad
+opt.foldlevel = 99 -- Using ufo provider need a large value, feel free to decrease the value
+opt.foldlevelstart = 99
+opt.foldenable = true

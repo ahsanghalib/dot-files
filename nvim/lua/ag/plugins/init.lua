@@ -4,4 +4,5 @@ return {
 	"tpope/vim-fugitive",
 	"nvim-pack/nvim-spectre",
 	"entrez/roku.vim",
+	"kevinhwang91/promise-async",
 }
