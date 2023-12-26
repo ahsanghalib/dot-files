@@ -4,7 +4,7 @@ return {
 	version = "*",
 	opts = {
 		options = {
-			mode = "buffers",
+			mode = "tabs",
 			numbers = "both",
 			separator_style = "thick",
 			always_show_bufferline = true,

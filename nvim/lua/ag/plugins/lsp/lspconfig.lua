@@ -1,12 +1,3 @@
-local venv_path = os.getenv("VIRTUAL_ENV")
-local py_path = nil
--- decide which python executable to use for mypy
-if venv_path ~= nil then
-	py_path = venv_path .. "/bin/python3"
-else
-	py_path = vim.g.python3_host_prog
-end
-
 return {
 	"neovim/nvim-lspconfig",
 	event = { "BufReadPre", "BufNewFile" },
@@ -141,8 +132,13 @@ return {
 			on_attach = on_attach,
 		})
 
-		-- configure css server
+		-- configure htmx server
 		lspconfig["htmx"].setup({
+			capabilities = capabilities,
+			on_attach = on_attach,
+		})
+
+		lspconfig["htmx-lsp"].setup({
 			capabilities = capabilities,
 			on_attach = on_attach,
 		})
@@ -207,6 +203,22 @@ return {
 			capabilities = capabilities,
 			on_attach = on_attach,
 			filetypes = { "python" },
+			single_file_support = true,
+			settings = {
+				pyright = {
+					disableLanguageServices = false,
+					disableOrganizeImports = false,
+				},
+				python = {
+					analysis = {
+						autoImportCompletions = true,
+						autoSearchPaths = true,
+						diagnosticMode = "workspace", -- openFilesOnly, workspace
+						typeCheckingMode = "basic", -- off, basic, strict
+						useLibraryCodeForTypes = true,
+					},
+				},
+			},
 		})
 
 		-- configure lua server (with special settings)
@@ -235,49 +247,9 @@ return {
 			on_attach = on_attach,
 		})
 
-		lspconfig["eslint"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
 		lspconfig["rust_analyzer"].setup({
-
 			capabilities = capabilities,
 			on_attach = on_attach,
-		})
-
-		lspconfig["pylsp"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-			settings = {
-				pylsp = {
-					plugins = {
-						-- formatter options
-						black = { enabled = true },
-						autopep8 = { enabled = false },
-						yapf = { enabled = false },
-						-- linter options
-						pylint = { enabled = true, executable = "pylint" },
-						ruff = { enabled = false },
-						pyflakes = { enabled = false },
-						pycodestyle = { enabled = false },
-						-- type checker
-						pylsp_mypy = {
-							enabled = true,
-							overrides = { "--python-executable", py_path, true },
-							report_progress = true,
-							live_mode = false,
-						},
-						-- auto-completion options
-						jedi_completion = { fuzzy = true },
-						-- import sorting
-						isort = { enabled = true },
-					},
-				},
-			},
-			flags = {
-				debounce_text_changes = 200,
-			},
 		})
 
 		lspconfig["clojure_lsp"].setup({

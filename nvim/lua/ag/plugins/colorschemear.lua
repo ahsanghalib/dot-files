@@ -2,22 +2,19 @@ return {
 	{
 		"bluz71/vim-nightfly-guicolors",
 		priority = 1000, -- make sure to load this before all the other start plugins
-		config = function()
-			-- load the colorscheme here
-			vim.cmd([[colorscheme nightfly]])
-		end,
-	},
-	{
-		"folke/tokyonight.nvim",
-		lazy = false,
-		priority = 1000,
 		-- config = function()
-		--   vim.cmd.colorscheme("tokyonight-night")
+		-- 	vim.cmd([[colorscheme nightfly]])
 		-- end,
 	},
 	{
+		"folke/tokyonight.nvim",
+		priority = 1000,
+		config = function()
+			vim.cmd.colorscheme("tokyonight-night")
+		end,
+	},
+	{
 		"morhetz/gruvbox",
-		lazy = false,
 		priority = 1000,
 		-- config = function()
 		--   vim.cmd.colorscheme("gruvbox")
@@ -25,7 +22,6 @@ return {
 	},
 	{
 		"ayu-theme/ayu-vim",
-		lazy = false,
 		priority = 1000,
 		-- config = function()
 		--   vim.cmd.colorscheme("ayu")
@@ -33,29 +29,25 @@ return {
 	},
 	{
 		"catppuccin/nvim",
-		name = "catppuccin",
 		priority = 1000,
-		lazy = false,
 		-- config = function()
 		-- 	vim.cmd.colorscheme("catppuccin")
 		-- end,
 	},
 	{
 		"projekt0n/github-nvim-theme",
-		lazy = false, -- make sure we load this during startup if it is your main colorscheme
-		priority = 1000, -- make sure to load this before all the other start plugins
+		priority = 1000,
 		-- config = function()
-		-- 	require("github-theme").setup({})
-		-- vim.cmd("colorscheme github_dark_high_default")
+		-- require("github-nvim-theme").setup({})
+		-- 	vim.cmd("colorscheme github_dark_high_default")
 		-- end,
 	},
 
 	{
 		"EdenEast/nightfox.nvim",
-		lazy = false,
-		priority = 1000, -- make sure to load this before all the other start plugins
+		priority = 1000,
 		-- config = function()
-		-- 	require("github-theme").setup({})
+		-- 	require("nightfox").setup({})
 		-- 	vim.cmd("colorscheme nightfox")
 		-- end,
 	},

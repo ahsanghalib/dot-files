@@ -38,11 +38,11 @@ return {
 				"sonarlint-language-server",
 				"elixirls",
 				"bright_script",
-				"pyright",
-				"ruff",
-				"mypy",
 				"htmx",
+				"htmx-lsp",
+				"pyright-langserver",
 			},
+			automatic_installation = true, -- not the same as ensure_installed
 		})
 
 		mason_lspconfig.setup({
@@ -57,9 +57,9 @@ return {
 				"graphql",
 				"emmet_ls",
 				"prismals",
-				"pyright",
 				"elixirls",
 				"bright_script",
+				"pyright",
 			},
 			-- auto-install configured servers (with lspconfig)
 			automatic_installation = true, -- not the same as ensure_installed
@@ -69,10 +69,7 @@ return {
 			ensure_installed = {
 				"prettier", -- prettier formatter
 				"stylua", -- lua formatter
-				"pylint", -- python linter
-				"black",
-				"mypy",
-				"ruff",
+				"ruff", -- python linter
 				"eslint_d", -- js linter
 			},
 		})
