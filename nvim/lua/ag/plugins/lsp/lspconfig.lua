@@ -138,11 +138,6 @@ return {
 			on_attach = on_attach,
 		})
 
-		lspconfig["htmx-lsp"].setup({
-			capabilities = capabilities,
-			on_attach = on_attach,
-		})
-
 		-- configure brightscript server
 		lspconfig["bright_script"].setup({
 			capabilities = capabilities,
