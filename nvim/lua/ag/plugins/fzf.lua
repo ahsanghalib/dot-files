@@ -1,6 +1,6 @@
 return {
 	"junegunn/fzf",
 	run = function()
-		vim.fn["fzf#install"]()
+		vim.fn["fzf#install()"]()
 	end,
 }
