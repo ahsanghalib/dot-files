@@ -64,8 +64,8 @@ vim.keymap.set('n', 'n', 'nzzzv')
 vim.keymap.set('n', 'N', 'Nzzzv')
 vim.keymap.set('n', '<leader>s', [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]])
 vim.keymap.set('n', '<leader>d', [[_d]])
-vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
-vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
+-- vim.keymap.set('n', '<C-k>', '<cmd>cnext<CR>zz')
+-- vim.keymap.set('n', '<C-j>', '<cmd>cprev<CR>zz')
 vim.keymap.set('n', '<leader>co', '<cmd>copen<CR>')
 vim.keymap.set('n', '<leader>cc', '<cmd>cclose<CR>')
 vim.keymap.set('n', '<leader>cx', "<cmd>call setqflist([], 'r')<CR>")
@@ -114,6 +114,11 @@ require('lazy').setup {
   { 'numToStr/Comment.nvim', opts = {} },
 
   {
+    'stevearc/dressing.nvim',
+    opts = {},
+  },
+
+  {
     'Exafunction/codeium.vim',
     event = 'BufEnter',
   },
@@ -124,6 +129,31 @@ require('lazy').setup {
     dependencies = {
       'nvim-lua/plenary.nvim',
     },
+  },
+
+  {
+    'kevinhwang91/nvim-bqf',
+    ft = 'qf',
+  },
+
+  {
+    'NvChad/nvim-colorizer.lua',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = true,
+  },
+
+  {
+    'Bekaboo/dropbar.nvim',
+    lazy = false,
+    dependencies = {
+      'nvim-telescope/telescope-fzf-native.nvim',
+    },
+    config = function()
+      require('dropbar').setup {}
+      vim.ui.select = require('dropbar.utils.menu').select
+
+      vim.keymap.set('n', '<leader>b', "<cmd>lua require('dropbar.api').pick()<cr>", { desc = 'Select breadcrums' })
+    end,
   },
 
   {
@@ -162,7 +192,6 @@ require('lazy').setup {
       },
       { 'nvim-telescope/telescope-ui-select.nvim' },
       { 'nvim-tree/nvim-web-devicons' },
-      { 'ThePrimeagen/harpoon' },
     },
     config = function()
       require('telescope').setup {
@@ -175,24 +204,23 @@ require('lazy').setup {
 
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
-      pcall(require('telescope').load_extension, 'harpoon')
 
-      local builtin = require 'telescope.builtin'
-      vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Search Help' })
-      vim.keymap.set('n', '<leader>fk', builtin.keymaps, { desc = 'Search Keymaps' })
-      vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Search Files' })
-      vim.keymap.set('n', '<leader>fs', builtin.builtin, { desc = 'Search Select Telescope' })
-      vim.keymap.set('n', '<leader>fw', builtin.grep_string, { desc = 'Search current Word' })
-      vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Search by Grep' })
-      vim.keymap.set('n', '<leader>fd', builtin.diagnostics, { desc = 'Search Diagnostics' })
-      vim.keymap.set('n', '<leader>fr', builtin.resume, { desc = 'Search Resume' })
-      vim.keymap.set('n', '<leader>f.', builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
-      vim.keymap.set('n', '<leader>hf', '<cmd>Telescope harpoon marks<cr>', { desc = 'Show harpoon marks' })
+      vim.keymap.set('n', '<leader>fh', '<cmd>Telescope help_tags<CR>', { desc = 'Search Help' })
+      vim.keymap.set('n', '<leader>fk', '<cmd>Telescope keymaps<CR>', { desc = 'Search Keymaps' })
+      vim.keymap.set('n', '<leader>ff', '<cmd>Telescope find_files<CR>', { desc = 'Search Files' })
+      vim.keymap.set('n', '<leader>fs', '<cmd>Telescope builtin<CR>', { desc = 'Search Select Telescope' })
+      vim.keymap.set('n', '<leader>fw', '<cmd>Telescope grep_string<CR>', { desc = 'Search current Word' })
+      vim.keymap.set('n', '<leader>fg', '<cmd>Telescope live_grep<CR>', { desc = 'Search by Grep' })
+      vim.keymap.set('n', '<leader>fd', '<cmd>Telescope diagnostics<CR>', { desc = 'Search Diagnostics' })
+      vim.keymap.set('n', '<leader>fr', '<cmd>Telescope resume<CR>', { desc = 'Search Resume' })
+      vim.keymap.set('n', '<leader>f.', '<cmd>Telescope oldfiles<CR>', { desc = 'Search Recent Files ("." for repeat)' })
+      vim.keymap.set('n', '<leader>fb', '<cmd>Telescope buffers<CR>', { desc = '[ ] Find existing buffers' })
       vim.keymap.set('n', '<leader>gc', '<cmd>Telescope git_commits<cr>', { desc = 'Show git commits' })
       vim.keymap.set('n', '<leader>gfc', '<cmd>Telescope git_bcommits<cr>', { desc = 'Show git commits for current buffer' })
       vim.keymap.set('n', '<leader>gb', '<cmd>Telescope git_branches<cr>', { desc = 'Show git branches' })
       vim.keymap.set('n', '<leader>gs', '<cmd>Telescope git_status<cr>', { desc = 'Show current git changes per file' })
+
+      local builtin = require 'telescope.builtin'
 
       vim.keymap.set('n', '<leader>/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
@@ -251,20 +279,36 @@ require('lazy').setup {
         },
         completion = { completeopt = 'menu,menuone,noinsert' },
         mapping = cmp.mapping.preset.insert {
-          ['<C-n>'] = cmp.mapping.select_next_item(),
-          ['<C-p>'] = cmp.mapping.select_prev_item(),
-          ['<C-y>'] = cmp.mapping.confirm { select = true },
-          ['<C-Space>'] = cmp.mapping.complete {},
-          ['<C-l>'] = cmp.mapping(function()
-            if luasnip.expand_or_locally_jumpable() then
-              luasnip.expand_or_jump()
+          ['<C-k>'] = cmp.mapping.select_prev_item(), -- previous suggestion
+          ['<C-j>'] = cmp.mapping.select_next_item(), -- next suggestion
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(), -- show completion suggestions
+          ['<C-e>'] = cmp.mapping.abort(), -- close completion window
+          ['<CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Insert,
+            select = true,
+          },
+          ['<Tab>'] = cmp.mapping(function(fallback)
+            if require('luasnip').expand_or_jumpable() then
+              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-expand-or-jump', true, true, true), '')
+            else
+              fallback()
             end
-          end, { 'i', 's' }),
-          ['<C-h>'] = cmp.mapping(function()
-            if luasnip.locally_jumpable(-1) then
-              luasnip.jump(-1)
+          end, {
+            'i',
+            's',
+          }),
+          ['<S-Tab>'] = cmp.mapping(function(fallback)
+            if require('luasnip').jumpable(-1) then
+              vim.fn.feedkeys(vim.api.nvim_replace_termcodes('<Plug>luasnip-jump-prev', true, true, true), '')
+            else
+              fallback()
             end
-          end, { 'i', 's' }),
+          end, {
+            'i',
+            's',
+          }),
         },
         sources = {
           { name = 'nvim_lsp' },
@@ -300,16 +344,16 @@ require('lazy').setup {
             vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
           end
 
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          map('gd', require('telescope.builtin').lsp_definitions, 'Goto Definition')
+          map('gD', vim.lsp.buf.declaration, 'Goto Declaration')
+          map('gr', require('telescope.builtin').lsp_references, 'Goto References')
+          map('gI', require('telescope.builtin').lsp_implementations, 'Goto Implementation')
+          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type Definition')
+          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, 'Document Symbols')
+          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Workspace Symbols')
+          map('<leader>rn', vim.lsp.buf.rename, 'LSP Rename')
+          map('<leader>ca', vim.lsp.buf.code_action, 'Code Action')
           map('K', vim.lsp.buf.hover, 'Hover Documentation')
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
 
           local client = vim.lsp.get_client_by_id(event.data.client_id)
           if client and client.server_capabilities.documentHighlightProvider then
@@ -330,7 +374,7 @@ require('lazy').setup {
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
       local servers = {
         html = {},
-        tsserver = {},
+        -- tsserver = {},
         cssls = {},
         htmx = {},
         bright_script = {},
@@ -493,7 +537,6 @@ require('lazy').setup {
         },
       }
 
-      -- configure lualine with modified theme
       ---@diagnostic disable-next-line: undefined-field
       lualine.setup {
         options = {
@@ -640,20 +683,6 @@ require('lazy').setup {
     end,
   },
 
-  -- {
-  --   'akinsho/bufferline.nvim',
-  --   dependencies = { 'nvim-tree/nvim-web-devicons' },
-  --   version = '*',
-  --   opts = {
-  --     options = {
-  --       mode = 'tabs',
-  --       numbers = 'both',
-  --       separator_style = 'thick',
-  --       always_show_bufferline = true,
-  --     },
-  --   },
-  -- },
-
   {
     'ThePrimeagen/harpoon',
     dependencies = {
@@ -664,8 +693,10 @@ require('lazy').setup {
       local keymap = vim.keymap -- for conciseness
 
       keymap.set('n', '<leader>hm', "<cmd>lua require('harpoon.mark').add_file()<cr>", { desc = 'Mark file with harpoon' })
+      keymap.set('n', '<leader>hf', "<cmd>lua require('harpoon.ui').toggle_quick_menu()<cr>", { desc = 'Mark file with harpoon' })
       keymap.set('n', '<leader>hn', "<cmd>lua require('harpoon.ui').nav_next()<cr>", { desc = 'Go to next harpoon mark' })
       keymap.set('n', '<leader>hp', "<cmd>lua require('harpoon.ui').nav_prev()<cr>", { desc = 'Go to previous harpoon mark' })
+      keymap.set('n', '<leader>ht', "<cmd>lua require('harpoon.term').gotoTerminal(1)<cr>", { desc = 'Go to previous harpoon mark' })
     end,
   },
 
@@ -812,6 +843,14 @@ require('lazy').setup {
   },
 
   {
+    'andymass/vim-matchup',
+    event = { 'BufReadPost' },
+    config = function()
+      vim.g.matchup_matchparen_offscreen = { method = 'popup' }
+    end,
+  },
+
+  {
     'ray-x/go.nvim',
     dependencies = {
       'ray-x/guihua.lua',
@@ -890,23 +929,25 @@ require('lazy').setup {
         },
       }
 
-      -- set keymaps
-      local keymap = vim.keymap -- for conciseness
-
-      keymap.set('n', '<leader>ee', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file explorer' }) -- toggle file explorer
-      keymap.set('n', '<leader>ef', '<cmd>NvimTreeFindFileToggle<CR>', { desc = 'Toggle file explorer on current file' }) -- toggle file explorer on current file
-      keymap.set('n', '<leader>ec', '<cmd>NvimTreeCollapse<CR>', { desc = 'Collapse file explorer' }) -- collapse file explorer
-      keymap.set('n', '<leader>er', '<cmd>NvimTreeRefresh<CR>', { desc = 'Refresh file explorer' }) -- refresh file explorer
+      vim.keymap.set('n', '<leader>ee', '<cmd>NvimTreeToggle<CR>', { desc = 'Toggle file explorer' })
+      vim.keymap.set('n', '<leader>ef', '<cmd>NvimTreeFindFileToggle<CR>', { desc = 'Toggle file explorer on current file' })
+      vim.keymap.set('n', '<leader>ec', '<cmd>NvimTreeCollapse<CR>', { desc = 'Collapse file explorer' })
+      vim.keymap.set('n', '<leader>er', '<cmd>NvimTreeRefresh<CR>', { desc = 'Refresh file explorer' })
     end,
   },
 
   {
-    'folke/tokyonight.nvim',
-    priority = 1000,
-    -- config = function()
-    --   vim.cmd.colorscheme 'tokyonight-night'
-    --   vim.cmd.hi 'Comment gui=none'
-    -- end,
+    'pmizio/typescript-tools.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    opts = {},
+    config = function(_, opts)
+      require('typescript-tools').setup(opts)
+
+      vim.keymap.set('n', '<leader>tso', '<cmd>TSToolsOrganizeImports<CR>', { desc = 'TS Organize Imports' })
+      vim.keymap.set('n', '<leader>tss', '<cmd>TSToolsSortImports<CR>', { desc = 'TS Sort Imports' })
+      vim.keymap.set('n', '<leader>tsf', '<cmd>TSToolsFixAll<CR>', { desc = 'TS Fix All' })
+      vim.keymap.set('n', '<leader>tsr', '<cmd>TSToolsRename<CR>', { desc = 'TS Rename' })
+    end,
   },
 
   {
