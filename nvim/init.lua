@@ -604,6 +604,7 @@ require('lazy').setup {
           'toml',
           'zig',
           'vue',
+          'astro',
         },
         auto_install = true,
         highlight = { enable = true },
