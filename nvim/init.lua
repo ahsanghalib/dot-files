@@ -4,8 +4,8 @@ vim.g.conoline_auto_enable = 1
 
 vim.opt.number = true
 vim.opt.relativenumber = true
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
 vim.opt.autoindent = true
 vim.opt.wrap = true
@@ -28,8 +28,8 @@ vim.opt.foldcolumn = '1'
 vim.opt.foldlevel = 99
 vim.opt.foldlevelstart = 99
 vim.opt.foldenable = true
-vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- vim.opt.list = true
+-- vim.opt.listchars = { trail = '·', nbsp = '␣' }
 vim.opt.inccommand = 'split'
 vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
@@ -403,6 +403,10 @@ require('lazy').setup {
       })
 
       local capabilities = vim.lsp.protocol.make_client_capabilities()
+      capabilities.textDocument.foldingRange = {
+        dynamicRegistration = false,
+        lineFoldingOnly = true,
+      }
       capabilities = vim.tbl_deep_extend('force', capabilities, require('cmp_nvim_lsp').default_capabilities())
       local servers = {
         html = {},
@@ -498,6 +502,7 @@ require('lazy').setup {
           graphql = { 'prettier' },
           lua = { 'stylua' },
           python = { 'black' },
+          go = { 'goimports', 'gofmt', 'golines' },
         },
         format_on_save = {
           lsp_fallback = true,
@@ -991,6 +996,16 @@ require('lazy').setup {
     build = function()
       vim.fn['mkdp#util#install']()
     end,
+  },
+  {
+    'jiaoshijie/undotree',
+    dependencies = 'nvim-lua/plenary.nvim',
+    config = true,
+    keys = { -- load the plugin only when using it's keybinding:
+      { '<leader>u', "<cmd>lua require('undotree').toggle()<cr>" },
+      { '<leader>uo', "<cmd>lua require('undotree').open()<cr>" },
+      { '<leader>uc', "<cmd>lua require('undotree').close()<cr>" },
+    },
   },
 
   {
