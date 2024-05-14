@@ -53,6 +53,7 @@ vim.keymap.set('n', '<leader>wv', '<C-w>v', { desc = 'Split window vertically' }
 vim.keymap.set('n', '<leader>wh', '<C-w>s', { desc = 'Split window horizontally' })
 vim.keymap.set('n', '<leader>we', '<C-w>=', { desc = 'Make splits equal size' })
 vim.keymap.set('n', '<leader>wx', '<cmd>close<CR>', { desc = 'Close current split' })
+vim.keymap.set('n', '<leader>tt', '<cmd>ToggleTerm<CR>', { desc = 'Toggle terminal' })
 vim.keymap.set('n', '<leader>to', '<cmd>tabnew<CR>', { desc = 'Open new tab' })
 vim.keymap.set('n', '<leader>tx', '<cmd>tabclose<CR>', { desc = 'Close current tab' })
 vim.keymap.set('n', '<leader>tn', '<cmd>tabn<CR>', { desc = 'Go to next tab' })
@@ -122,6 +123,21 @@ require('lazy').setup {
   {
     'Exafunction/codeium.vim',
     event = 'BufEnter',
+    config = function()
+      -- Change '<C-g>' here to any keycode you like.
+      vim.keymap.set('i', '<C-g>', function()
+        return vim.fn['codeium#Accept']()
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-;>', function()
+        return vim.fn['codeium#CycleCompletions'](1)
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-,>', function()
+        return vim.fn['codeium#CycleCompletions'](-1)
+      end, { expr = true, silent = true })
+      vim.keymap.set('i', '<C-x>', function()
+        return vim.fn['codeium#Clear']()
+      end, { expr = true, silent = true })
+    end,
   },
 
   {
@@ -749,6 +765,8 @@ require('lazy').setup {
     'stevearc/dressing.nvim',
     event = 'VeryLazy',
   },
+
+  { 'akinsho/toggleterm.nvim', version = '*', config = true },
 
   {
     'elixir-tools/elixir-tools.nvim',
