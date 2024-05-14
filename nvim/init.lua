@@ -431,6 +431,7 @@ require('lazy').setup {
         docker_compose_language_service = {},
         jsonls = {},
         gopls = {},
+        zls = {},
         pyright = {},
         lua_ls = {
           -- cmd = {...},
